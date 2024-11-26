@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
+import os
 import sys
 from time import sleep, time
 from typing import Tuple
@@ -24,10 +25,12 @@ from redis import StrictRedis
 from telegram import InlineQueryResultArticle, InputTextMessageContent
 from telegram.constants import MessageLimit
 from telegram.error import NetworkError, TelegramError
-
+from dotenv import load_dotenv
 from bismillahbot import Quran, make_index
-from secret import TOKEN
 
+load_dotenv()
+
+TOKEN = os.environ.get("TOKEN")
 
 r = StrictRedis()
 redis_namespace = ""
@@ -83,7 +86,7 @@ def save_file(filename: str, file_id: str):
     message = ''
     try:
         message = message_to_dict(file_id)
-    except(err):
+    except Exception as err:
         message = ''
         print("Error", err)
     r.set(redis_namespace + "file:" + filename,
@@ -101,7 +104,7 @@ def get_audio_filename(s: int, a: int) -> str:
 
 
 def get_image_filename(s: int, a: int) -> str:
-    return "quran_images/" + str(s) + "_" + str(a) + ".png"
+    return "quranic_images/" + str(s) + "_" + str(a) + ".png"
 
 
 async def send_file(bot, filename, quran_type, **kwargs):

@@ -77,14 +77,14 @@ pdftotext -nopgbrk Al_Jalalain_Eng.pdf
 wget "http://www.everyayah.com/data/Husary_128kbps/000_versebyverse.zip"
 unzip -d Husary 000_versebyverse.zip
 wget "http://www.everyayah.com/data/quranpngs/000_images.zip"
-unzip -d quran_images 000_images.zip
+unzip -d quranic_images 000_images.zip
 ```
 
 We do some post-processing on the images. First we remove the empty area's from
 the edges with [ImageMagick](https://www.imagemagick.org/script/index.php) and
 [GNU parallel](https://www.gnu.org/software/parallel/):
 ``` shell
-cd quran_images/
+cd quranic_images/
 parallel "echo {}; convert {} -trim {}" ::: *.png
 ```
 Then we optimize the images with [pngout](http://www.jonof.id.au/kenutils):
