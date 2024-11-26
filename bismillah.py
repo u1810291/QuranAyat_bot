@@ -31,8 +31,13 @@ from bismillahbot import Quran, make_index
 load_dotenv()
 
 TOKEN = os.environ.get("TOKEN")
+HOST = os.environ.get("REDIS_HOST")
+REDIS_PORT = os.environ.get("REDIS_PORT")
+REDIS_USERNAME = os.environ.get("REDIS_USERNAME")
+REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
 
-r = StrictRedis()
+r = StrictRedis(HOST, port=int(REDIS_PORT), username=REDIS_USERNAME, password=REDIS_PASSWORD)
+
 redis_namespace = ""
 update_id = None
 
