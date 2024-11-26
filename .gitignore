@@ -1,0 +1,14 @@
+*.pyc
+secret.py
+
+env
+# env/*
+# Husary
+# quran_images
+# 000_images.zip
+# 000_versebyverse.zip
+# Al_Jalalain_Eng.pdf
+# Al_Jalalain_Eng.txt
+# dump.rdb
+# en.ahmedraza
+# quran-data.xml
