@@ -33,10 +33,16 @@ load_dotenv()
 TOKEN = os.environ.get("TOKEN")
 HOST = os.environ.get("REDIS_HOST")
 REDIS_PORT = os.environ.get("REDIS_PORT")
+
+if REDIS_PORT is not None:
+    port = int(port)
+else:
+    port = 6379
+
 REDIS_USERNAME = os.environ.get("REDIS_USERNAME")
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
 
-r = StrictRedis(HOST, port=REDIS_PORT, username=REDIS_USERNAME, password=REDIS_PASSWORD)
+r = StrictRedis(HOST, port=int(REDIS_PORT), username=REDIS_USERNAME, password=REDIS_PASSWORD)
 
 redis_namespace = ""
 update_id = None
