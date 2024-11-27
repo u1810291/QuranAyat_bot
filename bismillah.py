@@ -13,26 +13,26 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from dotenv import load_dotenv
+load_dotenv()
 import re
 import os
 import sys
-from time import sleep, time
-from typing import Tuple
 import asyncio
 import telegram
 import ujson as json
+from time import sleep, time
+from typing import Tuple
 from redis import StrictRedis
 from telegram import InlineQueryResultArticle, InputTextMessageContent
 from telegram.constants import MessageLimit
 from telegram.error import NetworkError, TelegramError
-from dotenv import load_dotenv
 from bismillahbot import Quran, make_index
 
-load_dotenv()
 
 TOKEN = os.environ.get("TOKEN")
 HOST = os.environ.get("REDIS_HOST")
-REDIS_PORT = os.environ.get("REDIS_PORT")
+REDIS_PORT = os.environ.get("REDIS_PORT") or 26141
 
 if REDIS_PORT is not None:
     port = int(port)
