@@ -29,22 +29,11 @@ from telegram.constants import MessageLimit
 from telegram.error import NetworkError, TelegramError
 from bismillahbot import Quran, make_index
 
-
 TOKEN = os.environ.get("TOKEN")
-HOST = os.environ.get("REDIS_HOST")
-REDIS_PORT = os.environ.get("REDIS_PORT")
-REDIS_USERNAME = os.environ.get("REDIS_USERNAME")
-REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
+REDIS_URL = os.environ.get("REDIS_PORT")
 
-if REDIS_PORT is not None:
-    port = int(REDIS_PORT)
-else:
-    port = 26141
-
-redis_url = os.getenv('Redis.REDIS_URL')
-print("Redis host ", redis_url)
-
-r = StrictRedis(HOST, port=port, username=REDIS_USERNAME, password=REDIS_PASSWORD)
+r = StrictRedis.from_url(REDIS_URL)
+print("Redis host ", r)
 
 redis_namespace = ""
 update_id = None
