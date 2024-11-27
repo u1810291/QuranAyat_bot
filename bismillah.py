@@ -33,7 +33,7 @@ TOKEN = os.environ.get("TOKEN")
 REDIS_URL = os.environ.get("REDIS_URL")
 
 print("Redis host ", REDIS_URL)
-r = StrictRedis.from_url(REDIS_URL)
+r = StrictRedis.from_url("redis://default:fParUvajBrMAtmAVudRPoEQFySnnbyMr@autorack.proxy.rlwy.net:26141")
 
 redis_namespace = ""
 update_id = None
