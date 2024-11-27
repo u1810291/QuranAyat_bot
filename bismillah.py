@@ -41,6 +41,9 @@ if REDIS_PORT is not None:
 else:
     port = 26141
 
+redis_url = os.getenv('Redis.REDIS_URL')
+print("Redis host ", redis_url)
+
 r = StrictRedis(HOST, port=port, username=REDIS_USERNAME, password=REDIS_PASSWORD)
 
 redis_namespace = ""
