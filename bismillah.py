@@ -30,10 +30,10 @@ from telegram.error import NetworkError, TelegramError
 from bismillahbot import Quran, make_index
 
 TOKEN = os.environ.get("TOKEN")
-REDIS_URL = os.environ.get("REDIS_PORT")
+REDIS_URL = os.environ.get("REDIS_URL")
 
+print("Redis host ", REDIS_URL)
 r = StrictRedis.from_url(REDIS_URL)
-print("Redis host ", r)
 
 redis_namespace = ""
 update_id = None
