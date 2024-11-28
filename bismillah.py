@@ -102,7 +102,7 @@ def get_file(filename: str):
 
 
 def get_audio_filename(performer: str, surah: int, ayah: int) -> str:
-    return str(performer) + str(surah).zfill(3) + str(ayah).zfill(3) + ".mp3"
+    return 'Husary/' + str(surah).zfill(3) + str(ayah).zfill(3) + ".mp3"
 
 
 def get_image_filename(s: int, a: int) -> str:
