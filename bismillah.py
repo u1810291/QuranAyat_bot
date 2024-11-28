@@ -26,7 +26,7 @@ from typing import Tuple
 from redis import StrictRedis
 from telegram import InlineQueryResultArticle, InputTextMessageContent
 from telegram.constants import MessageLimit
-from telegram.error import NetworkError, TelegramError, Forbidden
+from telegram.error import NetworkError, TelegramError, Forbidden, Conflict
 from bismillahbot import Quran, make_index
 
 TOKEN = os.getenv("TOKEN")
@@ -90,7 +90,7 @@ def save_file(filename: str, file_id: str):
         message = message_to_dict(file_id)
     except Exception as err:
         message = ''
-        print("Error", err)
+        print("Error on save file", err)
     r.set(redis_namespace + "file:" + filename,
           json.dumps(message), ex=60 * 60 * 24 * 2)  # keep for 2 days for making it month add 31 instead of 2
 
@@ -132,7 +132,8 @@ async def send_file(bot, filename, quran_type, **kwargs):
         with open(filename, "rb") as f:
             return await upload(f)
 
-    f = get_file(filename) or "https://www.everyayah.com/data/Husary_128kbps/001001.mp3"
+    f = get_file(filename) 
+    # or "https://www.everyayah.com/data/Husary_128kbps/001001.mp3"
     print("File ", f)
     if f is not None:
         try:
@@ -189,16 +190,22 @@ async def main():
 
     while True:
         try:
+            print("trying in while loop")
             await serve(bot, data)
         except NetworkError:
             sleep(1)
+        except Conflict as e:
+            print(f"Conflict error: {e}. Retrying in 5 seconds...")
+            sleep(5)
         except Forbidden:  # user has removed or blocked the bot
+            print('is forbidden ')
             update_id += 1
         except TelegramError as e:
             if "Invalid server response" in str(e):
                 sleep(3)
             else:
-                print("Error ", e)
+                print("Error in main ", e)
+                raise e
 
 
 async def serve(bot, data):
