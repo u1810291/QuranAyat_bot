@@ -29,8 +29,8 @@ from telegram.constants import MessageLimit
 from telegram.error import NetworkError, TelegramError
 from bismillahbot import Quran, make_index
 
-TOKEN = os.environ.get("TOKEN")
-REDIS_URL = os.environ.get("REDIS_URL")
+TOKEN = os.getenv("TOKEN")
+REDIS_URL = os.getenv("REDIS_URL")
 
 print("Redis host ", REDIS_URL)
 r = StrictRedis.from_url("redis://default:fParUvajBrMAtmAVudRPoEQFySnnbyMr@autorack.proxy.rlwy.net:26141")
