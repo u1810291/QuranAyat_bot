@@ -30,10 +30,10 @@ from telegram.error import NetworkError, TelegramError, Forbidden, Conflict
 from bismillahbot import Quran, make_index
 
 TOKEN = os.getenv("TOKEN")
-REDIS_URL = os.getenv("REDIS_URL")
+REDIS_HOST_URL = os.getenv("REDIS_HOST_URL")
 
-print("Redis host ", REDIS_URL)
-r = StrictRedis.from_url("redis://default:fParUvajBrMAtmAVudRPoEQFySnnbyMr@autorack.proxy.rlwy.net:26141")
+print("Redis host ", REDIS_HOST_URL)
+r = StrictRedis.from_url(REDIS_HOST_URL)
 
 redis_namespace = ""
 update_id = None
@@ -119,12 +119,10 @@ async def send_file(bot, filename, quran_type, **kwargs):
             result = await bot.send_photo(photo=f, **kwargs)
             v = result["photo"][-1]["file_id"]
         elif quran_type == "audio":
-            print('FIle', f)
             result = await bot.send_audio(audio=f, **kwargs)
             await bot.get_updates()
 
             v = result["audio"]["file_id"]
-            print("Printing uploaded audio ", v)
         save_file(filename, v)
         return v
 
@@ -134,7 +132,6 @@ async def send_file(bot, filename, quran_type, **kwargs):
 
     f = get_file(filename) 
     # or "https://www.everyayah.com/data/Husary_128kbps/001001.mp3"
-    print("File ", f)
     if f is not None:
         try:
             return await upload(f)
@@ -190,7 +187,6 @@ async def main():
 
     while True:
         try:
-            print("trying in while loop")
             await serve(bot, data)
         except NetworkError:
             sleep(1)
