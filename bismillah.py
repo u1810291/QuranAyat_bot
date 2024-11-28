@@ -26,7 +26,7 @@ from typing import Tuple
 from redis import StrictRedis
 from telegram import InlineQueryResultArticle, InputTextMessageContent
 from telegram.constants import MessageLimit
-from telegram.error import NetworkError, TelegramError
+from telegram.error import NetworkError, TelegramError, Forbidden
 from bismillahbot import Quran, make_index
 
 TOKEN = os.getenv("TOKEN")
@@ -192,13 +192,13 @@ async def main():
             await serve(bot, data)
         except NetworkError:
             sleep(1)
-        # except Unauthorized:  # user has removed or blocked the bot
-        #     update_id += 1
+        except Forbidden:  # user has removed or blocked the bot
+            update_id += 1
         except TelegramError as e:
             if "Invalid server response" in str(e):
                 sleep(3)
             else:
-                raise e
+                print("Error ", e)
 
 
 async def serve(bot, data):
