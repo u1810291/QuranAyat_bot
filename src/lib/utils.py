@@ -59,3 +59,15 @@ def save_file(filename: str, file_id: str):
   r.set(redis_namespace + "file:" + filename,
         json.dumps(message), ex=60 * 60 * 24 * 2)  # keep for 2 days for making it month add 31 instead of 2
 
+def get_file(filename: str):
+  f = r.get(redis_namespace + "file:" + filename)
+  if f is not None:
+    return json.loads(f)
+
+
+def get_audio_filename(performer: str, surah: int, ayah: int) -> str:
+  return str(performer) + str(surah).zfill(3) + str(ayah).zfill(3) + ".mp3"
+
+
+def get_image_filename(s: int, a: int) -> str:
+  return "quranic_images/" + str(s) + "_" + str(a) + ".png"

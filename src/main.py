@@ -30,7 +30,15 @@ from telegram.error import NetworkError, TelegramError
 from bismillahbot import Quran, make_index
 from telegram import InlineQueryResultArticle, InputTextMessageContent
 
-from lib import message_to_dict, save_user, get_user, save_file
+from lib import (
+  message_to_dict,
+  save_user,
+  get_user,
+  save_file,
+  get_file,
+  get_audio_filename,
+  get_image_filename
+)
 
 TOKEN = os.environ.get("TOKEN")
 REDIS_URL = os.environ.get("REDIS_URL")
@@ -40,20 +48,6 @@ r = StrictRedis.from_url(REDIS_URL)
 
 redis_namespace = ""
 update_id = None
-
-def get_file(filename: str):
-  f = r.get(redis_namespace + "file:" + filename)
-  if f is not None:
-    return json.loads(f)
-
-
-def get_audio_filename(performer: str, surah: int, ayah: int) -> str:
-  return str(performer) + str(surah).zfill(3) + str(ayah).zfill(3) + ".mp3"
-
-
-def get_image_filename(s: int, a: int) -> str:
-  return "quranic_images/" + str(s) + "_" + str(a) + ".png"
-
 
 async def send_file(bot, filename, quran_type, **kwargs):
   """Tries to send file from Telegram's cache, only uploads from disk if necessary.

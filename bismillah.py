@@ -105,8 +105,8 @@ def get_audio_filename(performer: str, surah: int, ayah: int) -> str:
     return 'Husary/' + str(surah).zfill(3) + str(ayah).zfill(3) + ".mp3"
 
 
-def get_image_filename(s: int, a: int) -> str:
-    return "quranic_images/" + str(s) + "_" + str(a) + ".png"
+def get_image_filename(surah: int, ayah: int) -> str:
+    return "quranic_images/" + str(surah) + "_" + str(ayah) + ".png"
 
 
 async def send_file(bot, filename, quran_type, **kwargs):
@@ -234,11 +234,11 @@ async def serve(bot, data):
             query = update.inline_query.query
             results = []
             cache_time = 66 * (60 ** 2 * 24)
-            s, a = parse_ayah(query)
-            if s is not None and Quran.exists(s, a):
-                ayah = "%d:%d" % (s, a)
-                english = data["english"].get_ayah(s, a)
-                tafsir = data["tafsir"].get_ayah(s, a)
+            surah, ayah = parse_ayah(query)
+            if surah is not None and Quran.exists(surah, ayah):
+                ayah = "%d:%d" % (surah, ayah)
+                english = data["english"].get_ayah(surah, ayah)
+                tafsir = data["tafsir"].get_ayah(surah, ayah)
                 results.append(InlineQueryResultArticle(
                     ayah + "english", title="English",
                     description=english[:120],
@@ -261,9 +261,9 @@ async def serve(bot, data):
         message = update.message.text.lower()
         state = get_user(chat_id)
         if state is not None:
-            s, a, quran_type = state
+            surah, ayah, quran_type = state
         else:
-            s, a, quran_type = 1, 1, "english"
+            surah, ayah, quran_type = 1, 1, "english"
 
         print("%d:%.3f:%s" % (chat_id, time(), message.replace("\n", " ")))
 
@@ -299,17 +299,17 @@ async def serve(bot, data):
             continue
         elif message in ("next", "previous", "random", "/random"):
             if message == "next":
-                s, a = Quran.get_next_ayah(s, a)
+                surah, ayah = Quran.get_next_ayah(surah, ayah)
             elif message == "previous":
-                s, a = Quran.get_previous_ayah(s, a)
+                surah, ayah = Quran.get_previous_ayah(surah, ayah)
             elif message in ("random", "/random"):
-                s, a = Quran.get_random_ayah()
+                surah, ayah = Quran.get_random_ayah()
             await send_quran("performer", surah, ayah, quran_type, chat_id)
             continue
 
-        s, a = parse_ayah(message)
-        if s:
-            if Quran.exists(s, a):
+        surah, ayah = parse_ayah(message)
+        if surah:
+            if Quran.exists(surah, ayah):
                 await send_quran("performer", surah, ayah, quran_type, chat_id, reply_markup=data["interface"])
             else:
                 await bot.send_message(chat_id=chat_id, text="Ayah does not exist!")
@@ -320,9 +320,9 @@ async def serve(bot, data):
 def parse_ayah(message: str):
     match = re.match("/?(\d+)[ :\-;.,]*(\d*)", message)
     if match is not None:
-        s = int(match.group(1))
-        a = int(match.group(2)) if match.group(2) else 1
-        return s, a
+        surah = int(match.group(1))
+        ayah = int(match.group(2)) if match.group(2) else 1
+        return surah, ayah
     else:
         return None, None
 
@@ -333,3 +333,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except Exception as e:
         print("Error occurred", e)
+        raise e
