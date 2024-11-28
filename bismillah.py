@@ -101,8 +101,8 @@ def get_file(filename: str):
         return json.loads(f)
 
 
-def get_audio_filename(s: int, a: int) -> str:
-    return "Husary/" + str(s).zfill(3) + str(a).zfill(3) + ".mp3"
+def get_audio_filename(performer: str, surah: int, ayah: int) -> str:
+    return str(performer) + str(surah).zfill(3) + str(ayah).zfill(3) + ".mp3"
 
 
 def get_image_filename(s: int, a: int) -> str:
@@ -132,7 +132,8 @@ async def send_file(bot, filename, quran_type, **kwargs):
         with open(filename, "rb") as f:
             return await upload(f)
 
-    f = get_file(filename)
+    f = get_file(filename) or "https://www.everyayah.com/data/Husary_128kbps/001001.mp3"
+    print("File ", f)
     if f is not None:
         try:
             return await upload(f)
@@ -203,27 +204,27 @@ async def main():
 async def serve(bot, data):
     global update_id
 
-    async def send_quran(s: int, a: int, quran_type: str, chat_id: int, reply_markup=None):
+    async def send_quran(performer: str, surah: int, ayah: int, quran_type: str, chat_id: int, reply_markup=None):
         if quran_type in ("english", "tafsir"):
-            text = data[quran_type].get_ayah(s, a)
+            text = data[quran_type].get_ayah(surah, ayah)
             await bot.send_message(chat_id=chat_id, text=text[:4096],
                              reply_markup=reply_markup)
         elif quran_type == "arabic":
             await bot.send_chat_action(chat_id=chat_id,
                                  action=telegram.constants.ChatAction.UPLOAD_PHOTO)
-            image = get_image_filename(s, a)
+            image = get_image_filename(surah, ayah)
             await send_file(bot, image, quran_type, chat_id=chat_id,
-                      caption="Quran %d:%d" % (s, a),
+                      caption="Quran %d:%d" % (surah, ayah),
                       reply_markup=reply_markup)
         elif quran_type == "audio":
             await bot.send_chat_action(chat_id=chat_id,
                                  action=telegram.constants.ChatAction.UPLOAD_DOCUMENT)
-            audio = get_audio_filename(s, a)
+            audio = get_audio_filename(performer, surah, ayah)
             await send_file(bot, audio, quran_type, chat_id=chat_id,
                       performer="Shaykh Mahmoud Khalil al-Husary",
-                      title="Quran %d:%d" % (s, a),
+                      title="Quran %d:%d" % (surah, ayah),
                       reply_markup=reply_markup)
-        save_user(chat_id, (s, a, quran_type))
+        save_user(chat_id, (surah, ayah, quran_type))
 
     for update in await bot.get_updates(offset=update_id, timeout=10):
         update_id = update.update_id + 1
@@ -294,7 +295,7 @@ async def serve(bot, data):
                 continue
 
         if message in ("english", "tafsir", "audio", "arabic"):
-            await send_quran(s, a, message, chat_id)
+            await send_quran(performer, surah, ayah, message, chat_id)
             continue
         elif message in ("next", "previous", "random", "/random"):
             if message == "next":
@@ -303,13 +304,13 @@ async def serve(bot, data):
                 s, a = Quran.get_previous_ayah(s, a)
             elif message in ("random", "/random"):
                 s, a = Quran.get_random_ayah()
-            await send_quran(s, a, quran_type, chat_id)
+            await send_quran(performer, surah, ayah, quran_type, chat_id)
             continue
 
         s, a = parse_ayah(message)
         if s:
             if Quran.exists(s, a):
-                await send_quran(s, a, quran_type, chat_id, reply_markup=data["interface"])
+                await send_quran(performer, surah, ayah, quran_type, chat_id, reply_markup=data["interface"])
             else:
                 await bot.send_message(chat_id=chat_id, text="Ayah does not exist!")
 
