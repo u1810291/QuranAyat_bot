@@ -295,7 +295,7 @@ async def serve(bot, data):
                 continue
 
         if message in ("english", "tafsir", "audio", "arabic"):
-            await send_quran(performer, surah, ayah, message, chat_id)
+            await send_quran("performer", surah, ayah, message, chat_id)
             continue
         elif message in ("next", "previous", "random", "/random"):
             if message == "next":
@@ -304,13 +304,13 @@ async def serve(bot, data):
                 s, a = Quran.get_previous_ayah(s, a)
             elif message in ("random", "/random"):
                 s, a = Quran.get_random_ayah()
-            await send_quran(performer, surah, ayah, quran_type, chat_id)
+            await send_quran("performer", surah, ayah, quran_type, chat_id)
             continue
 
         s, a = parse_ayah(message)
         if s:
             if Quran.exists(s, a):
-                await send_quran(performer, surah, ayah, quran_type, chat_id, reply_markup=data["interface"])
+                await send_quran("performer", surah, ayah, quran_type, chat_id, reply_markup=data["interface"])
             else:
                 await bot.send_message(chat_id=chat_id, text="Ayah does not exist!")
 
