@@ -38,7 +38,6 @@ async def send_file(bot, filename, quran_type, **kwargs):
             result = await bot.send_photo(photo=f, **kwargs)
             v = result["photo"][-1]["file_id"]
         elif quran_type == "audio":
-            print("audio = ", f)
             result = await bot.send_audio(audio=f, **kwargs)
             await bot.get_updates()
 
@@ -134,7 +133,6 @@ async def serve(bot, data):
             await bot.send_chat_action(chat_id=chat_id,
                                 action=telegram.constants.ChatAction.UPLOAD_DOCUMENT)
             audio = file.get_audio_filename(surah, ayah, performer)
-            print("AUDIO THAT WE GET FROM URL = ", audio)
             await send_file(bot, audio, quran_type, chat_id=chat_id,
                       performer="Shaykh Mahmoud Khalil al-Husary",
                       title="Quran %d:%d" % (surah, ayah),
